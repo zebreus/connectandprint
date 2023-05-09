@@ -29,12 +29,12 @@ class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin,
         start_time = time.time()
 
         while not printer.is_operational() and time.time() - start_time < timeout:
-            if ((time.time() - start_time) % 10) == 0:
+            if (int(time.time() - start_time) % 10) == 0:
                 cmd_str = "/home/pi/poweron"
                 subprocess.run(cmd_str, shell=True)
                 printer.connect()
 
-            time.sleep(2)
+            time.sleep(0.5)
 
         if printer.is_operational():
             printer.select_file(file_path, False)
