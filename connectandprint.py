@@ -21,14 +21,19 @@ class ConnectAndPrintPlugin(octoprint.plugin.EventHandlerPlugin,
 
         if not printer.is_operational():
             printer.connect()
+            cmd_str = "/home/pi/poweron"
+            subprocess.run(cmd_str, shell=True)
 
         self._logger.info("Waiting for printer to connect...")
         timeout = 120  # 2 minutes in seconds
         start_time = time.time()
 
         while not printer.is_operational() and time.time() - start_time < timeout:
-            cmd_str = "/home/pi/poweron"
-            subprocess.run(cmd_str, shell=True)
+            if ((time.time() - start_time) % 10) == 0:
+                cmd_str = "/home/pi/poweron"
+                subprocess.run(cmd_str, shell=True)
+                printer.connect()
+
             time.sleep(2)
 
         if printer.is_operational():
